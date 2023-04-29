@@ -1,40 +1,41 @@
 import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         boolean isFinished = false;
-                while (!isFinished) {
-                    Scanner myScanner = new Scanner(System.in);
-                    DisplayMenu();
-                    String selection = myScanner.next();
-                    switch (selection) {
-                        case "1":
-                        {
-                            int Matrix[][] = CreateMatrix();
-                            MatrixAddition(Matrix,Matrix);
-                            Warshall(Matrix);
-                            break;
-                        }
-                        case "2":
-                        {
-                            DisplayMenu();
-                        }
-                        case "3":
-                        {
-                            isFinished=true;
-                        }
-                        default:System.out.println("Enter valid input");
-                    }
+        while (!isFinished) {
+            Scanner myScanner = new Scanner(System.in);
+            DisplayMenu();
+            String selection = myScanner.next();
+            switch (selection) {
+                case "1": {
+                    int[][] Matrix = CreateMatrix();
+                    break;
                 }
+                case "2":
+                {
+                    int[][] Matrix = CreateMatrix();
+                    
+                }
+                    case "3": {
+                        isFinished = true;
+                    }
+                    default:
+                        System.out.println("Enter valid input");
+
+            }
+        }
     }
+
     public static int[][] CreateMatrix()
     {
-        int matrixSize;
+        int matrixSize = 15;
         Scanner myScanner = new Scanner(System.in);
-        System.out.print("\nEnter Matrix Size: ");
-        matrixSize = myScanner.nextInt();
-
+        while (matrixSize > 6)
+        {
+            System.out.print("\nEnter Matrix Size: ");
+            matrixSize = myScanner.nextInt();
+        }
         int[][] Matrix = new int[matrixSize][matrixSize];
         for (int i = 0; i <matrixSize; i++)
         {
@@ -48,18 +49,25 @@ public class Main {
         return Matrix;
     }
 
-    public static void Warshall(int G[][])
+    public static int[][] Warshall(int G[][])
     {//CHPT 30 Graphs Reachability Warshall Algorithm slide
 
         int i, j, k;
         int size = G.length;
         int[][] Result = new int[size][size];
+        for (i = 0; i < G.length; i++)
+            for (j = 0; j < G.length; j++)
+                Result[i][j] = G[i][j];
+
         for (k = 0; k < size; k++)
             for (i = 0; i < size; i++)
                 for (j = 0; j < size; j++)
-                    if (G[i][k] + G[k][j] < G[i][j])
-                        Result[i][j] = G[i][k] + G[k][j];
-        PrintMatrix(Result);
+                {
+                    Result[i][j] = Result[i][j] | Result[i][k] & Result[k][j];
+                }
+
+
+        return Result;
     }
     public static void DisplayMenu()
     {
@@ -77,13 +85,13 @@ public class Main {
         {
             for (int j = 0; j < size; j++)
             {
+                result[i][j] = 0;
                 for (int k = 0; k < size; k++)
                 {
                     result[i][j] += Matrix1[i][k] * Matrix2[k][j];
                 }
             }
         }
-
         return result;
     }
     public static int[][] MatrixAddition(int [][] Matrix1, int [][]Matrix2)
