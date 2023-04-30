@@ -1,6 +1,6 @@
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Set;
 
 public class Main {
     public static void main(String[] args) {
@@ -20,10 +20,10 @@ public class Main {
                     System.out.println("Input Matrix:");
                     PrintMatrix(Matrix);
                     IntegerAdjacencyMatrix(Matrix);
-                    OutDegrees(Matrix);
                     InDegrees(Matrix);
-                    SelfLoops(Matrix);
-
+                    OutDegrees(Matrix);
+                    ComputePathsandCycles(Matrix);
+                    break;
                 }
                     case "3": {
                         isFinished = true;
@@ -187,7 +187,7 @@ public class Main {
         PrintMatrix(IntegerAdjacencyMatrix);
     }
     //Sum of the major diagonal in A1 gives total number of self-loops.
-    public static void SelfLoops(int[][] Matrix)
+    public static int Cycles(int[][] Matrix)
     {
         System.out.println();
         int size = Matrix.length;
@@ -198,10 +198,83 @@ public class Main {
                 if (j == i && Matrix[i][j] == 0)
                     sum--;
             }
-        System.out.println("Total number of self-loops:" + sum);
+        return sum;
     }
-    public static void ComputePaths(int[][] Matrix)
+    public static void ComputePathsandCycles(int[][] MatrixA1) //dear god forgive me
     {
+        int size = MatrixA1.length; int iterator = 1; int sumOfPaths = 0; int sumOfCycles = 0;
+        int pathsLengthOne = 0; int cyclesOfLength = 0; int pathsOfLength = 0;
+        int[] cycles = new int[size];
+        int[][] MatrixA2 = new int[size][size],
+                MatrixA3 = new int[size][size],
+                MatrixA4 = new int[size][size],
+                PathMatrix = MatrixA1;
 
+        cycles[iterator-1] = Cycles(MatrixA1);
+        if (iterator < size) {
+            MatrixA2 = MatrixMultiplication(MatrixA1, MatrixA1);
+            cycles[iterator] += Cycles(MatrixA2);
+            PathMatrix = MatrixAddition(PathMatrix,MatrixA2);
+                if (size == 2)
+                {
+                    cyclesOfLength = Cycles(MatrixA2);
+                    pathsOfLength = TwoDArraySum(MatrixA2);
+                }
+        }
+        ++iterator;
+        if (iterator < size) {
+            MatrixA3 = MatrixMultiplication(MatrixA2, MatrixA1);
+            cycles[iterator] += Cycles(MatrixA3);
+            PathMatrix = MatrixAddition(PathMatrix,MatrixA3);
+            if (size == 3)
+            {
+                cyclesOfLength = Cycles(MatrixA3);
+                pathsOfLength = TwoDArraySum(MatrixA3);
+            }
+        }
+        ++iterator;
+        if (iterator < size) {
+            MatrixA4 = MatrixMultiplication(MatrixA3, MatrixA1);
+            cycles[iterator] += Cycles(MatrixA4);
+            PathMatrix = MatrixAddition(PathMatrix,MatrixA4);
+            if (size == 4)
+            {
+                cyclesOfLength = Cycles(MatrixA4);
+                pathsOfLength = TwoDArraySum(MatrixA4);
+            }
+        }
+        ++iterator;
+        if  (iterator < size) {
+            int[][] MatrixA5 = MatrixMultiplication(MatrixA4, MatrixA1);
+            cycles[iterator] += Cycles(MatrixA5);
+            PathMatrix = MatrixAddition(PathMatrix,MatrixA5);
+            if (size == 5)
+            {
+                cyclesOfLength = Cycles(MatrixA5);
+                pathsOfLength = TwoDArraySum(MatrixA5);
+            }
+        }
+         sumOfPaths =TwoDArraySum(PathMatrix);
+         pathsLengthOne =TwoDArraySum(MatrixA1);
+
+        for (int i = 0; i < size; i++)
+            sumOfCycles+=cycles[i];
+
+        System.out.println("Total number of self loops " + Cycles(MatrixA1));
+        System.out.println("Total number of cycles of length " + size + " edges: " +cyclesOfLength);
+        System.out.println("Total number of paths of length 1 edge: " +  pathsLengthOne);
+        System.out.println("Total number of paths of length " + size + " edges: " +pathsOfLength);
+        System.out.println("Total number of paths of length 1 to " + size + " edges: " + sumOfPaths);
+        System.out.println("Total number of cycles of length 1 to  " + size + " edges: " + sumOfCycles);
+    }
+
+    public static int TwoDArraySum(int [][] Array)
+    {
+        int sum = 0;
+        int size = Array.length;
+        for (int i = 0; i < size; i++)
+            for (int j = 0; j < size; j++)
+                sum += Array[i][j];
+        return sum;
     }
 }
