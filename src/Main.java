@@ -22,6 +22,7 @@ public class Main {
                     IntegerAdjacencyMatrix(Matrix);
                     OutDegrees(Matrix);
                     InDegrees(Matrix);
+                    SelfLoops(Matrix);
 
                 }
                     case "3": {
@@ -39,13 +40,8 @@ public class Main {
             DisplayMenu();
             String selection = myScanner.next();
             switch (selection) {
-                case "1" -> {
-                    int[][] Matrix = CreateMatrix();
-                    return Matrix;
-                }
-                case "3" -> {
-                    System.exit(0);
-                }
+                case "1" -> {return CreateMatrix();}
+                case "3" -> {System.exit(0);}
                 default -> System.out.println("Please enter graph data!");
             }
         }
@@ -77,7 +73,6 @@ public class Main {
 
     public static int[][] Warshall(int[][] G)
     {//CHPT 30 Graphs Reachability Warshall Algorithm slide
-
         int i, j, k;
         int size = G.length;
         int[][] Result = new int[size][size];
@@ -108,7 +103,6 @@ public class Main {
         int size = Matrix1.length;
         int [][]result = new int [size][size];
         for (int i = 0; i < size; i++)
-        {
             for (int j = 0; j < size; j++)
             {
                 result[i][j] = 0;
@@ -117,29 +111,23 @@ public class Main {
                     result[i][j] += Matrix1[i][k] * Matrix2[k][j];
                 }
             }
-        }
         return result;
     }
     public static int[][] MatrixAddition(int [][] Matrix1, int [][]Matrix2)
     {
         int [][] MatrixSum =new int[Matrix1.length][Matrix1.length];
         for (int i = 0; i < Matrix1.length; i++)
-        {
             for (int j = 0; j < Matrix1[0].length; j++) {
                 MatrixSum[i][j] = Matrix1[i][j] + Matrix2[i][j];
             }
-        }
-
         return MatrixSum;
     }
-    //Print out the input matrix.
     public static void PrintMatrix(int[][] Matrix)
     {
         for (int[] matrix : Matrix) {
             System.out.print("[");
-            for (int j = 0; j < Matrix.length; j++) {
+            for (int j = 0; j < Matrix.length; j++)
                 System.out.print(matrix[j] + " ");
-            }
             System.out.print("\b]\n");
         }
     }
@@ -151,9 +139,7 @@ public class Main {
         {
             int sum = 0;
                 for (int j = 0; j < size; j++)
-                {
                     sum = sum + Matrix[i][j];
-                }
             System.out.println("Node " + (i+1) +" out-degree is " + sum);
         }
     }
@@ -197,9 +183,25 @@ public class Main {
             int[][] MatrixA5 = MatrixMultiplication(MatrixA4, MatrixA1);
             IntegerAdjacencyMatrix = MatrixAddition(IntegerAdjacencyMatrix,MatrixA5);
         }
-
         System.out.println("Reachability Matrix:");
         PrintMatrix(IntegerAdjacencyMatrix);
     }
+    //Sum of the major diagonal in A1 gives total number of self-loops.
+    public static void SelfLoops(int[][] Matrix)
+    {
+        System.out.println();
+        int size = Matrix.length;
+        int sum= size;
+        for (int i = 0; i < size; i++)
+            for (int j = 0; j < size; j++)
+            {
+                if (j == i && Matrix[i][j] == 0)
+                    sum--;
+            }
+        System.out.println("Total number of self-loops:" + sum);
+    }
+    public static void ComputePaths(int[][] Matrix)
+    {
 
+    }
 }
