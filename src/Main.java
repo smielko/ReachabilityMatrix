@@ -32,7 +32,7 @@ public class Main {
             }
         }
     }
-    public static int[][] InitialGraph() //clean this up dear god
+    public static int[][] InitialGraph() //Forces first graph creation
     {
         boolean isFinished = false;
         while (!isFinished) {
@@ -53,40 +53,19 @@ public class Main {
     {
         int matrixSize = 15;//arbitrary number
         Scanner myScanner = new Scanner(System.in);
-        while (matrixSize > 6)
+        while (matrixSize > 6) //Requirements: Max graph size of 5
         {
             System.out.print("\nEnter Matrix Size: ");
             matrixSize = myScanner.nextInt();
         }
         int[][] Matrix = new int[matrixSize][matrixSize];
-        for (int i = 0; i <matrixSize; i++)
-        {
+        for (int i = 0; i <matrixSize; i++) //data insertion and formatting
             for (int j = 0; j < matrixSize; j++)
             {
                 System.out.printf("Enter A1[" +i + "] [" + j + "]: ");
                 Matrix[i][j] = myScanner.nextInt();
             }
-        }
-        PrintMatrix(Matrix);
         return Matrix;
-    }
-
-    public static int[][] Warshall(int[][] G)
-    {//CHPT 30 Graphs Reachability Warshall Algorithm slide
-        int i, j, k;
-        int size = G.length;
-        int[][] Result = new int[size][size];
-        for (i = 0; i < G.length; i++)
-            for (j = 0; j < G.length; j++)
-                Result[i][j] = G[i][j];
-        for (k = 0; k < size; k++)
-            for (i = 0; i < size; i++)
-                for (j = 0; j < size; j++)
-                {
-                    Result[i][j] = Result[i][j] | Result[i][k] & Result[k][j];
-                }
-        PrintMatrix(Result);
-        return Result;
     }
     public static void DisplayMenu()
     {
@@ -106,7 +85,7 @@ public class Main {
             for (int j = 0; j < size; j++)
             {
                 result[i][j] = 0;
-                for (int k = 0; k < size; k++)
+                for (int k = 0; k < size; k++) //math for multiplying 2 matrices together
                 {
                     result[i][j] += Matrix1[i][k] * Matrix2[k][j];
                 }
@@ -116,13 +95,13 @@ public class Main {
     public static int[][] MatrixAddition(int [][] Matrix1, int [][]Matrix2)
     {
         int [][] MatrixSum =new int[Matrix1.length][Matrix1.length];
-        for (int i = 0; i < Matrix1.length; i++)
+        for (int i = 0; i < Matrix1.length; i++)//math for adding 2 matrices together
             for (int j = 0; j < Matrix1[0].length; j++) {
                 MatrixSum[i][j] = Matrix1[i][j] + Matrix2[i][j];
             }
         return MatrixSum;
     }
-    public static void PrintMatrix(int[][] Matrix)
+    public static void PrintMatrix(int[][] Matrix) //prints adjacency matrix
     {
         for (int[] matrix : Matrix) {
             System.out.print("[");
@@ -131,26 +110,26 @@ public class Main {
             System.out.print("\b]\n");
         }
     }
-    public static void OutDegrees(int[][] Matrix)
+    public static void OutDegrees(int[][] Matrix) //computes out degrees of each node
     {
         System.out.println("Out-degrees:");
         int size = Matrix.length;
         for (int i = 0; i < size; i++)
         {
             int sum = 0;
-                for (int j = 0; j < size; j++)
+                for (int j = 0; j < size; j++)//sums all columns of a given row
                     sum = sum + Matrix[i][j];
             System.out.println("Node " + (i+1) +" out-degree is " + sum);
         }
     }
-    public static void InDegrees(int[][] Matrix)
+    public static void InDegrees(int[][] Matrix) //computes in degrees of each node
     {
         System.out.println("In-degrees:");
         int size = Matrix.length;
         for (int i = 0; i < size; i++)
         {
             int sum = 0;
-            for (int[] matrix : Matrix) {
+            for (int[] matrix : Matrix) { //sums all rows of a given column
                 sum = sum + matrix[i];
             }
             System.out.println("Node " + (i+1) +" in-degree is " + sum);
@@ -162,119 +141,113 @@ public class Main {
         int[][] MatrixA2 = new int[size][size],
                 MatrixA3 = new int[size][size],
                 MatrixA4 = new int[size][size],
-                IntegerAdjacencyMatrix = MatrixA1;
-
+                IntegerAdjacencyMatrix = MatrixA1;//Sum
+//false condition = the correct amount of computations has been performed for the given size of the graph
         if (iterator < size) {
-            MatrixA2 = MatrixMultiplication(MatrixA1, MatrixA1);
+            MatrixA2 = MatrixMultiplication(MatrixA1, MatrixA1); //A^2 creation
             IntegerAdjacencyMatrix = MatrixAddition(IntegerAdjacencyMatrix, MatrixA2);
         }
         ++iterator;
         if (iterator < size) {
-            MatrixA3 = MatrixMultiplication(MatrixA2, MatrixA1);
+            MatrixA3 = MatrixMultiplication(MatrixA2, MatrixA1); //A^3 creation
             IntegerAdjacencyMatrix = MatrixAddition(IntegerAdjacencyMatrix, MatrixA3);
         }
         ++iterator;
         if (iterator < size) {
-            MatrixA4 = MatrixMultiplication(MatrixA3, MatrixA1);
+            MatrixA4 = MatrixMultiplication(MatrixA3, MatrixA1); //A^4 creation
             IntegerAdjacencyMatrix = MatrixAddition(IntegerAdjacencyMatrix,MatrixA4);
         }
         ++iterator;
         if  (iterator < size) {
-            int[][] MatrixA5 = MatrixMultiplication(MatrixA4, MatrixA1);
+            int[][] MatrixA5 = MatrixMultiplication(MatrixA4, MatrixA1); //A^5 creation
             IntegerAdjacencyMatrix = MatrixAddition(IntegerAdjacencyMatrix,MatrixA5);
         }
         System.out.println("Reachability Matrix:");
         PrintMatrix(IntegerAdjacencyMatrix);
     }
-    //Sum of the major diagonal in A1 gives total number of self-loops.
+
     public static int Cycles(int[][] Matrix)
-    {
-        System.out.println();
+    {    //Sum of the major diagonal in A^n gives total number of cycles
         int size = Matrix.length;
         int sum= size;
         for (int i = 0; i < size; i++)
             for (int j = 0; j < size; j++)
             {
-                if (j == i && Matrix[i][j] == 0)
+                if (j == i && Matrix[i][j] == 0) //There is a disconnect in the graph
                     sum--;
             }
         return sum;
     }
     public static void ComputePathsandCycles(int[][] MatrixA1) //dear god forgive me
     {
-        int size = MatrixA1.length; int iterator = 1; int sumOfPaths = 0; int sumOfCycles = 0;
-        int pathsLengthOne = 0; int cyclesOfLength = 0; int pathsOfLength = 0;
+        int size = MatrixA1.length; int iterator = 1; int sumOfPaths = 0; int sumOfCycles = 1;//total amount of cycles
+        int pathsLengthOne = 0;
+        int cyclesOfLength = 1;//amount of cycles of length 1 -> n
+        int pathsOfLength = 1;//amount of paths of length 1 -> n
         int[] cycles = new int[size];
         int[][] MatrixA2 = new int[size][size],
                 MatrixA3 = new int[size][size],
                 MatrixA4 = new int[size][size],
                 PathMatrix = MatrixA1;
 
+        //Size 1:
         cycles[iterator-1] = Cycles(MatrixA1);
-        if (iterator < size) {
+        cyclesOfLength *= Cycles(MatrixA1);
+
+        //Size 2->n:
+        if (iterator < size) {//copied from the adjacency matrix
             MatrixA2 = MatrixMultiplication(MatrixA1, MatrixA1);
             cycles[iterator] += Cycles(MatrixA2);
             PathMatrix = MatrixAddition(PathMatrix,MatrixA2);
-                if (size == 2)
-                {
-                    cyclesOfLength = Cycles(MatrixA2);
-                    pathsOfLength = TwoDArraySum(MatrixA2);
-                }
-        }
+                cyclesOfLength *= Cycles(MatrixA2);
+                if(size==2) pathsOfLength = TwoDArraySum(MatrixA2);
+        }//the rest of these are direct copies, just with different matrices
         ++iterator;
         if (iterator < size) {
             MatrixA3 = MatrixMultiplication(MatrixA2, MatrixA1);
             cycles[iterator] += Cycles(MatrixA3);
             PathMatrix = MatrixAddition(PathMatrix,MatrixA3);
-            if (size == 3)
-            {
-                cyclesOfLength = Cycles(MatrixA3);
-                pathsOfLength = TwoDArraySum(MatrixA3);
-            }
+                cyclesOfLength *= Cycles(MatrixA3);
+                if(size==3)pathsOfLength = TwoDArraySum(MatrixA3);
         }
         ++iterator;
         if (iterator < size) {
             MatrixA4 = MatrixMultiplication(MatrixA3, MatrixA1);
             cycles[iterator] += Cycles(MatrixA4);
             PathMatrix = MatrixAddition(PathMatrix,MatrixA4);
-            if (size == 4)
-            {
-                cyclesOfLength = Cycles(MatrixA4);
-                pathsOfLength = TwoDArraySum(MatrixA4);
-            }
+                cyclesOfLength *= Cycles(MatrixA4);
+                if(size==4)pathsOfLength = TwoDArraySum(MatrixA4);
         }
         ++iterator;
         if  (iterator < size) {
             int[][] MatrixA5 = MatrixMultiplication(MatrixA4, MatrixA1);
             cycles[iterator] += Cycles(MatrixA5);
             PathMatrix = MatrixAddition(PathMatrix,MatrixA5);
-            if (size == 5)
-            {
-                cyclesOfLength = Cycles(MatrixA5);
-                pathsOfLength = TwoDArraySum(MatrixA5);
-            }
+                cyclesOfLength *= Cycles(MatrixA5);
+                if(size==5) pathsOfLength  = TwoDArraySum(MatrixA5);
         }
+        //Getting the results:
          sumOfPaths =TwoDArraySum(PathMatrix);
          pathsLengthOne =TwoDArraySum(MatrixA1);
-
         for (int i = 0; i < size; i++)
-            sumOfCycles+=cycles[i];
+            sumOfCycles*=cycles[i];
 
+        //Printing out the results:
         System.out.println("Total number of self loops " + Cycles(MatrixA1));
         System.out.println("Total number of cycles of length " + size + " edges: " +cyclesOfLength);
         System.out.println("Total number of paths of length 1 edge: " +  pathsLengthOne);
         System.out.println("Total number of paths of length " + size + " edges: " +pathsOfLength);
         System.out.println("Total number of paths of length 1 to " + size + " edges: " + sumOfPaths);
-        System.out.println("Total number of cycles of length 1 to  " + size + " edges: " + sumOfCycles);
+        System.out.println("Total number of cycles of length 1 to " + size + " edges: " + sumOfCycles);
     }
 
-    public static int TwoDArraySum(int [][] Array)
+    public static int TwoDArraySum(int [][] Array)//helper
     {
         int sum = 0;
         int size = Array.length;
-        for (int i = 0; i < size; i++)
+        for (int[] ints : Array)
             for (int j = 0; j < size; j++)
-                sum += Array[i][j];
+                sum += ints[j];
         return sum;
     }
 }
