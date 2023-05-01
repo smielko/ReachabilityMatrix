@@ -1,6 +1,10 @@
-import java.util.HashSet;
+
 import java.util.Scanner;
-import java.util.Set;
+// Name:Sebastian Mielko
+// Class:CS 3305/Section03
+// Term:Spring 2023
+// Instructor:Prof. Majeed
+// Assignment:8
 
 public class Main {
     public static void main(String[] args) {
@@ -180,57 +184,53 @@ public class Main {
     }
     public static void ComputePathsandCycles(int[][] MatrixA1) //dear god forgive me
     {
-        int size = MatrixA1.length; int iterator = 1; int sumOfPaths = 0; int sumOfCycles = 1;//total amount of cycles
+        int size = MatrixA1.length; int iterator = 1; int sumOfPaths = 0; int sumOfCycles = 0;//total amount of cycles
         int pathsLengthOne = 0;
-        int cyclesOfLength = 1;//amount of cycles of length 1 -> n
+        int cyclesOfLength = Cycles(MatrixA1);;//amount of cycles of length 1 -> n
         int pathsOfLength = 1;//amount of paths of length 1 -> n
-        int[] cycles = new int[size];
         int[][] MatrixA2 = new int[size][size],
                 MatrixA3 = new int[size][size],
                 MatrixA4 = new int[size][size],
                 PathMatrix = MatrixA1;
 
         //Size 1:
-        cycles[iterator-1] = Cycles(MatrixA1);
-        cyclesOfLength *= Cycles(MatrixA1);
-
+        sumOfCycles+=cyclesOfLength;
         //Size 2->n:
         if (iterator < size) {//copied from the adjacency matrix
             MatrixA2 = MatrixMultiplication(MatrixA1, MatrixA1);
-            cycles[iterator] += Cycles(MatrixA2);
             PathMatrix = MatrixAddition(PathMatrix,MatrixA2);
                 cyclesOfLength *= Cycles(MatrixA2);
+                sumOfCycles+=cyclesOfLength;
                 if(size==2) pathsOfLength = TwoDArraySum(MatrixA2);
         }//the rest of these are direct copies, just with different matrices
         ++iterator;
         if (iterator < size) {
             MatrixA3 = MatrixMultiplication(MatrixA2, MatrixA1);
-            cycles[iterator] += Cycles(MatrixA3);
             PathMatrix = MatrixAddition(PathMatrix,MatrixA3);
-                cyclesOfLength *= Cycles(MatrixA3);
+            cyclesOfLength *= Cycles(MatrixA3);
+            sumOfCycles+=cyclesOfLength;
                 if(size==3)pathsOfLength = TwoDArraySum(MatrixA3);
         }
         ++iterator;
         if (iterator < size) {
             MatrixA4 = MatrixMultiplication(MatrixA3, MatrixA1);
-            cycles[iterator] += Cycles(MatrixA4);
             PathMatrix = MatrixAddition(PathMatrix,MatrixA4);
-                cyclesOfLength *= Cycles(MatrixA4);
+            cyclesOfLength *= Cycles(MatrixA4);
+            sumOfCycles+=cyclesOfLength;
                 if(size==4)pathsOfLength = TwoDArraySum(MatrixA4);
         }
         ++iterator;
         if  (iterator < size) {
             int[][] MatrixA5 = MatrixMultiplication(MatrixA4, MatrixA1);
-            cycles[iterator] += Cycles(MatrixA5);
             PathMatrix = MatrixAddition(PathMatrix,MatrixA5);
-                cyclesOfLength *= Cycles(MatrixA5);
+            cyclesOfLength *= Cycles(MatrixA5);
+            sumOfCycles+=cyclesOfLength;
                 if(size==5) pathsOfLength  = TwoDArraySum(MatrixA5);
         }
         //Getting the results:
          sumOfPaths =TwoDArraySum(PathMatrix);
          pathsLengthOne =TwoDArraySum(MatrixA1);
-        for (int i = 0; i < size; i++)
-            sumOfCycles*=cycles[i];
+
 
         //Printing out the results:
         System.out.println("Total number of self loops " + Cycles(MatrixA1));
