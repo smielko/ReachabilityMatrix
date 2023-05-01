@@ -6,7 +6,7 @@ import java.util.Scanner;
 // Instructor:Prof. Majeed
 // Assignment:8
 
-public class Main {
+public class ReachabilityMatrix {
     public static void main(String[] args) {
         boolean isFinished = false;
         int [][] Matrix = InitialGraph();
